@@ -5,23 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.gwu.metroexplorer.ActivityMain">
+    tools:context="edu.gwu.metroexplorer.MenuActivity">
 
-    <View
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@color/colorPrimaryDark"
-    />
-    <View
         android:layout_weight="1"
-        android:id="@+id/bottomView"
+        android:text="Use Closest Station "/>
+
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_width="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_weight="1"
+        android:text="Select a Station"/>
 
-    />
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Favorite Landmark"/>
 
 
 </LinearLayout>
