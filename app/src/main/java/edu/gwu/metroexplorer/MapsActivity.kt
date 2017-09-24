@@ -1,18 +1,19 @@
 package edu.gwu.metroexplorer
 
-import android.support.v7.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
-
-import com.google.android.gms.maps.CameraUpdateFactory
+import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_menu.*
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    private lateinit var locationDetector: LocationDetector
+    private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +22,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        locationDetector = LocationDetector()
+        //locationDetector.getProvider(this)
+        //locationDetector.startLocationUpdates(this)
+        //locationDetector.getLastLocation(this)
+
+        //fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
+        //fetchMetroStationAsyncTask.getStations(this)
+
+
+        closestStation.setOnClickListener {
+            //TODO
+        }
+
+        favoriteLandMark.setOnClickListener {
+            //TODO
+        }
+
+        selectStation.setOnClickListener {
+            //TODO
+        }
+
     }
 
     /**
@@ -32,12 +55,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        locationDetector.getLastKnownLocation(this, mMap)
+        //val loc = locationDetector.latLng
+
+
     }
+
+
 }
