@@ -1,12 +1,16 @@
 package edu.gwu.metroexplorer
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
+import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.activity_menu.*
+import com.google.gson.JsonArray
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -14,14 +18,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var locationDetector: LocationDetector
     private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
+    private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        val listner = object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
+            override fun onFetchComplete(response: JsonArray) {
+                print(response)
+            }
+        }
+
+        fetchLandmarksTask  = FetchLandmarksAsyncTask()
+        fetchLandmarksTask.execute(this,""+ 38.896841,""+-77.050110, listner)
 
         locationDetector = LocationDetector()
         //locationDetector.getProvider(this)
@@ -44,6 +60,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             //TODO
         }
 
+    }
+
+    override fun onDestroy() {
+        val sharedPref : SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
+        val editor : SharedPreferences.Editor = sharedPref.edit()
+        editor.putString("yelp_access_token", "")
+        editor.commit()
+        super.onDestroy()
     }
 
     /**
