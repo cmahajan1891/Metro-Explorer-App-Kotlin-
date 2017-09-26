@@ -21,7 +21,7 @@ object Utilities {
     }
 
 
-    private fun readJsonStream(obj: JsonObject): List<Station> {
+    fun readJsonStream(obj: JsonObject): List<Station> {
         val stationsArray = obj.getAsJsonArray("Stations")
         try {
             return readMessagesArray(stationsArray)

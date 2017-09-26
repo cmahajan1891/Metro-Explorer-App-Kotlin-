@@ -93,6 +93,7 @@ class LocationDetector {
                 val lat = location.latitude
                 val lng = location.longitude
                 Toast.makeText(activity.baseContext, "Longitude: $lng Latitude: $lat", Toast.LENGTH_SHORT).show()
+
             } else {
                 mRequestingLocationUpdates = true
             }

@@ -2,7 +2,9 @@ package edu.gwu.metroexplorer
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.annotation.NonNull
@@ -12,6 +14,7 @@ import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.gson.JsonArray
 import kotlinx.android.synthetic.main.activity_menu.*
 
 
@@ -19,15 +22,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var locationDetector: LocationDetector
     private lateinit var mMap: GoogleMap
+    //private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
+    private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        val listner = object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
+            override fun onFetchComplete(response: JsonArray) {
+                print(response)
+            }
+        }
+
+        fetchLandmarksTask = FetchLandmarksAsyncTask()
+        fetchLandmarksTask.execute(this, "" + 38.896841, "" + -77.050110, listner)
 
         locationDetector = LocationDetector()
         locationDetector.getLastKnownLocation(this)
@@ -67,6 +82,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onPause()
         // Remove location updates to save battery.
         locationDetector.stopLocationUpdates(this)
+    }
+
+    override fun onDestroy() {
+        val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
+        editor.putString("yelp_access_token", "")
+        editor.commit()
+        super.onDestroy()
     }
 
     /**
