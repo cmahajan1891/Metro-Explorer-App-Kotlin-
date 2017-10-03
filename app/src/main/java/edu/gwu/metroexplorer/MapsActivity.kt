@@ -22,7 +22,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var locationDetector: LocationDetector
     private lateinit var mMap: GoogleMap
-    //private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
+    private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
     private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +40,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 print(response)
             }
         }
+        val ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
+            override fun onFetchComplete(response: JsonArray) {
+                print(response)
+            }
+        }
+
+        fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
+        fetchMetroStationAsyncTask.execute(this,ls)
 
         fetchLandmarksTask = FetchLandmarksAsyncTask()
         fetchLandmarksTask.execute(this, "" + 38.896841, "" + -77.050110, listner)
@@ -88,6 +96,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putString("yelp_access_token", "")
+        editor.putString("wmataApiKey", "")
         editor.commit()
         super.onDestroy()
     }
