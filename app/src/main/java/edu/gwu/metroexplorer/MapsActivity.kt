@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.gson.JsonArray
+import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_menu.*
 
 
@@ -35,10 +36,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        val listner = object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
-            override fun onFetchComplete(response: JsonArray) {
-                print(response)
-            }
+        val listner =
+                object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
+                    override fun onFetchComplete(response: ArrayList<YelpLandmark>?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
         }
         val ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
             override fun onFetchComplete(response: JsonArray) {

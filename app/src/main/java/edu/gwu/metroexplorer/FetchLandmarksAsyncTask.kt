@@ -2,11 +2,14 @@ package edu.gwu.metroexplorer
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.JsonArray
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
+import edu.gwu.metroexplorer.model.YelpLandmark
+import edu.gwu.metroexplorer.model.YelpSearch
 import org.jetbrains.anko.doAsync
-import javax.security.auth.callback.Callback
+
+
 
 /**
  * Created by ed-abe on 9/24/17.
@@ -19,7 +22,7 @@ class FetchLandmarksAsyncTask {
 
     interface OnFetchLandmarksCompletionListener {
 
-        fun onFetchComplete(response: JsonArray)
+        fun onFetchComplete(response: ArrayList<YelpLandmark>?)
     }
 
     fun execute(activity: MapsActivity, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener) {
@@ -50,10 +53,14 @@ class FetchLandmarksAsyncTask {
                     .addHeader("Authorization", "Bearer " + accessToken)
                     .asJsonObject()
                     .get()
+            val gson = Gson()
 
-            val businesses= jsonObj.getAsJsonArray("businesses")
-
-            listener.onFetchComplete(businesses)
+            if(jsonObj != null){
+                var search: YelpSearch = gson.fromJson(jsonObj, YelpSearch::class.java)
+                listener.onFetchComplete(search.businesses)
+            }else{
+                listener.onFetchComplete(null)
+            }
 
         }
     }
