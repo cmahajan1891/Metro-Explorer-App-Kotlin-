@@ -1,10 +1,11 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.async
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
+import edu.gwu.metroexplorer.views.MapsActivity
 import edu.gwu.metroexplorer.model.YelpLandmark
 import edu.gwu.metroexplorer.model.YelpSearch
 import org.jetbrains.anko.doAsync
@@ -44,10 +45,10 @@ class FetchLandmarksAsyncTask {
 
     }
 
-    fun getLandmarks(activity: MapsActivity, accessToken: String,latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener){
+    fun getLandmarks(activity: MapsActivity, accessToken: String, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener){
 
         doAsync {
-            var url = YELP_SEARCH_URL+"?latitude="+latitude+"&longitude="+longitude+"&radius_filter=8000"
+            var url = YELP_SEARCH_URL +"?latitude="+latitude+"&longitude="+longitude+"&radius_filter=8000"
             var jsonObj : JsonObject = Ion.with(activity.baseContext)
                     .load(url)
                     .addHeader("Authorization", "Bearer " + accessToken)

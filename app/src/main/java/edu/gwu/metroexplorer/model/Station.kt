@@ -1,4 +1,4 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.model
 
 /**
  * Created by cmahajan on 9/23/17.
