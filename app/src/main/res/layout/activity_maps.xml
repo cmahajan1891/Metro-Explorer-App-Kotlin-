@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.gwu.metroexplorer.MenuActivity">
+    tools:context="edu.gwu.metroexplorer.views.MenuActivity">
 
 
 <fragment
@@ -13,7 +13,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentTop="true"
-    tools:context="edu.gwu.metroexplorer.MapsActivity" />
+    tools:context="edu.gwu.metroexplorer.views.MapsActivity" />
 
     <Button
         android:id="@+id/closestStation"

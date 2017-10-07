@@ -1,4 +1,4 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.location
 
 import android.Manifest
 import android.content.IntentSender
@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import edu.gwu.metroexplorer.views.MapsActivity
 
 
 /**

@@ -1,4 +1,4 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.views
 
 import android.Manifest
 import android.app.Activity
@@ -15,6 +15,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.gson.JsonArray
+import edu.gwu.metroexplorer.R
+import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
+import edu.gwu.metroexplorer.async.FetchMetroStationsAsyncTask
+import edu.gwu.metroexplorer.location.*
 import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_menu.*
 

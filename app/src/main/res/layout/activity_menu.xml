@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.gwu.metroexplorer.MenuActivity">
+    tools:context="edu.gwu.metroexplorer.views.MenuActivity">
 
     <Button
         android:id="@+id/closestStation"

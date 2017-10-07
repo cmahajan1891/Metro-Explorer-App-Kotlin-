@@ -1,4 +1,4 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.async
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
+import edu.gwu.metroexplorer.views.MapsActivity
+import edu.gwu.metroexplorer.model.Station
 import org.jetbrains.anko.doAsync
 
 /**

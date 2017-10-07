@@ -1,11 +1,11 @@
-package edu.gwu.metroexplorer
+package edu.gwu.metroexplorer.async
 
 import android.content.Context
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
 import org.jetbrains.anko.doAsync
 import android.content.SharedPreferences
-import com.google.gson.JsonArray
+import edu.gwu.metroexplorer.views.MapsActivity
 
 
 private const val YELP_AUTH_URL = "https://api.yelp.com/oauth2/token"
