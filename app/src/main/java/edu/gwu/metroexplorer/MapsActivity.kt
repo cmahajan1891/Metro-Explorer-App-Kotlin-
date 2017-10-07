@@ -6,11 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.support.annotation.NonNull
 import android.support.v4.content.PermissionChecker
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.google.android.gms.location.LocationAvailability
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -25,6 +29,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
     private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
+    private lateinit var locCallback: LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,18 +53,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+         locCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+
+                locationDetector.mCurrentLocation = locationResult.lastLocation
+                locationDetector.updateUI(this@MapsActivity, listOf(locationDetector.mCurrentLocation) as List<Location>)
+            }
+
+            override fun onLocationAvailability(p0: LocationAvailability?) {
+                super.onLocationAvailability(p0)
+
+                if(locationDetector.mCurrentLocation!=null){
+                    locationDetector.updateUI(this@MapsActivity, listOf(locationDetector.mCurrentLocation) as List<Location>)
+                }
+
+            }
+        }
+
+        locationDetector = LocationDetector()
+
+        locationDetector.mRequestingLocationUpdates = false
+
+        locationDetector.updateValuesFromBundle(savedInstanceState, this)
+        locationDetector.getFusedLocationClient(this)
+
+        locationDetector.createLocationRequest()
+        locationDetector.buildLocationSettingsRequest()
+
         fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
-        fetchMetroStationAsyncTask.execute(this,ls)
+        fetchMetroStationAsyncTask.execute(this, ls)
 
         fetchLandmarksTask = FetchLandmarksAsyncTask()
         fetchLandmarksTask.execute(this, "" + 38.896841, "" + -77.050110, listner)
 
-        locationDetector = LocationDetector()
-        locationDetector.getLastKnownLocation(this)
 
-        locationDetector.updateValuesFromBundle(savedInstanceState, this)
-        locationDetector.createLocationRequest()
-        locationDetector.buildLocationSettingsRequest()
 
         closestStation.setOnClickListener {
             //TODO
@@ -79,19 +107,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onResume()
         // Within {@code onPause()}, we remove location updates. Here, we resume receiving
         // location updates if the user has requested them.
-        if (locationDetector.mRequestingLocationUpdates && PermissionChecker.checkSelfPermission(this@MapsActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationDetector.startLocationUpdates(this)
-        } else if (PermissionChecker.checkSelfPermission(this@MapsActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationDetector.requestPermissions(this)
+        if (locationDetector.isReady())
+        {
+            if (locationDetector.mRequestingLocationUpdates && PermissionChecker.checkSelfPermission(this@MapsActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationDetector.startLocationUpdates(this, locCallback)
+            } else if (PermissionChecker.checkSelfPermission(this@MapsActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationDetector.requestPermissions(this)
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
         // Remove location updates to save battery.
-        locationDetector.stopLocationUpdates(this)
+        if (locationDetector.isReady()) {
+            locationDetector.stopLocationUpdates(this, locCallback)
+        }
     }
 
     override fun onDestroy() {
@@ -133,12 +166,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         when (requestCode) {
         // Check for the integer request code originally supplied to startResolutionForResult().
             REQUEST_CHECK_SETTINGS -> when (resultCode) {
-                Activity.RESULT_OK -> Log.i(locationDetector.tag, "User agreed to make required location settings changes.")
-                Activity.RESULT_CANCELED -> {
-                    Log.i(locationDetector.tag, "User chose not to make required location settings changes.")
-                    locationDetector.mRequestingLocationUpdates = false
-                    locationDetector.updateUI(this, arrayListOf(locationDetector.mCurrentLocation!!))
+                Activity.RESULT_OK -> {
+                    Log.i(locationDetector.TAG, "User agreed to make required location settings changes.")
+                    locationDetector.mRequestingLocationUpdates = true
                 }
+                Activity.RESULT_CANCELED -> {
+                    Log.i(locationDetector.TAG, "User chose not to make required location settings changes.")
+                    locationDetector.mRequestingLocationUpdates = false
+                    locationDetector.updateUI(this, listOf(locationDetector.mCurrentLocation) as List<Location>)
+                }
+
             }// Nothing to do. startLocationupdates() gets called in onResume again.
         }
     }
@@ -146,16 +183,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>,
                                             @NonNull grantResults: IntArray) {
-        Log.i(locationDetector.tag, "onRequestPermissionResult")
+        Log.i(locationDetector.TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.isEmpty()) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(locationDetector.tag, "User interaction was cancelled.")
+                Log.i(locationDetector.TAG, "User interaction was cancelled.")
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (locationDetector.mRequestingLocationUpdates) {
-                    Log.i(locationDetector.tag, "Permission granted, updates requested, starting location updates")
-                    locationDetector.startLocationUpdates(this)
+                    Log.i(locationDetector.TAG, "Permission granted, updates requested, starting location updates")
+                    locationDetector.startLocationUpdates(this, locCallback)
                 }
             } else {
                 //TODO Implement the Snackbar functionality

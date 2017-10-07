@@ -36,23 +36,17 @@ class LocationDetector {
 
     private var mUpdateUIRequired: Boolean = true
     var mCurrentLocation: Location? = null
-    var mRequestingLocationUpdates: Boolean = true
+    var mRequestingLocationUpdates: Boolean = false
 
-    val tag = LocationDetector::class.java.simpleName!!
 
-    fun getLastKnownLocation(activity: MapsActivity) {
-        if (checkSelfPermission(activity.baseContext,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+    val TAG = LocationDetector::class.java.simpleName
+
+    fun getFusedLocationClient(activity: MapsActivity) {
+
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
             mFusedLocationClient.flushLocations()
             mSettingsClient = LocationServices.getSettingsClient(activity)
-            mFusedLocationClient.lastLocation
-                    .addOnSuccessListener(activity) { location ->
 
-                        updateUI(activity, arrayListOf(location))
-                        //TODO can set the mRequestingLocationUpdates to true here
-                    }
-        }
     }
 
     /**
@@ -62,8 +56,8 @@ class LocationDetector {
      */
     fun updateValuesFromBundle(savedInstanceState: Bundle?, activity: MapsActivity) {
         if (savedInstanceState != null) {
-            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
-            // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
+            // Update the value of mRequestingLocationUpdates from the Bundle
+
             if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         KEY_REQUESTING_LOCATION_UPDATES)
@@ -78,14 +72,14 @@ class LocationDetector {
             }
 
             if (mUpdateUIRequired) {
-                updateUI(activity, arrayListOf(mCurrentLocation!!))
+                updateUI(activity, listOf(mCurrentLocation) as List<Location>)
             }
         }
     }
 
-    fun updateUI(activity: MapsActivity, locationResult: List<Location>?) {
+    fun updateUI(activity: MapsActivity, locationResult: List<Location>) {
         // Got last known location. In some rare situations this can be null.
-        for (location in locationResult!!) {
+        for (location in locationResult) {
             if (location != null) {
                 // Logic to handle location object
                 mUpdateUIRequired = false
@@ -94,8 +88,6 @@ class LocationDetector {
                 val lng = location.longitude
                 Toast.makeText(activity.baseContext, "Longitude: $lng Latitude: $lat", Toast.LENGTH_SHORT).show()
 
-            } else {
-                mRequestingLocationUpdates = true
             }
         }
     }
@@ -142,33 +134,20 @@ class LocationDetector {
 
     //TODO implement the Permissions Logic
 
-    fun startLocationUpdates(activity: MapsActivity) {
+    fun startLocationUpdates(activity: MapsActivity, locCallback: LocationCallback) {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(activity) { locationResponse ->
-                    Log.i(tag, "All location settings are satisfied.")
+                    Log.i(TAG, "All location settings are satisfied.")
                     locationResponse.locationSettingsStates
                     if (checkSelfPermission(activity.baseContext,
                             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                object : LocationCallback() {
-
-                                    override fun onLocationResult(p0: LocationResult?) {
-                                        super.onLocationResult(p0)
-                                        updateUI(activity, p0?.locations)
-                                    }
-
-                                    override fun onLocationAvailability(p0: LocationAvailability?) {
-                                        super.onLocationAvailability(p0)
-                                        p0?.isLocationAvailable
-                                        p0?.describeContents()
-                                    }
-
-                                }, Looper.getMainLooper()
+                                locCallback, null
                         ).addOnSuccessListener {
-                            Log.d(tag, "Request Location Updates Pass.")
+                            Log.d(TAG, "Request Location Updates Pass.")
                         }.addOnFailureListener {
-                            Log.e(tag, "Request Location Updates Fail.")
+                            Log.e(TAG, "Request Location Updates Fail.")
                         }
                     }
 
@@ -178,20 +157,20 @@ class LocationDetector {
                     val statusCode = (e as ApiException).statusCode
                     when (statusCode) {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                            Log.i(tag, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
+                            Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
                             try {
                                 // Show the dialog by calling startResolutionForResult(), and check the
                                 // result in onActivityResult().
                                 val rae = e as ResolvableApiException
                                 rae.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)
                             } catch (sie: IntentSender.SendIntentException) {
-                                Log.i(tag, "PendingIntent unable to execute request.")
+                                Log.i(TAG, "PendingIntent unable to execute request.")
                             }
 
                         }
                         LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
                             val errorMessage = "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings."
-                            Log.e(tag, errorMessage)
+                            Log.e(TAG, errorMessage)
                             Toast.makeText(activity.baseContext, errorMessage, Toast.LENGTH_LONG).show()
                             mRequestingLocationUpdates = false
                         }
@@ -208,41 +187,44 @@ class LocationDetector {
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(tag, "Displaying permission rationale to provide additional context.")
+            Log.i(TAG, "Displaying permission rationale to provide additional context.")
             //TODO provide permission Rationale
         } else {
-            Log.i(tag, "Requesting permission")
+            Log.i(TAG, "Requesting permission")
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_PERMISSIONS_REQUEST_CODE)
+            mRequestingLocationUpdates = true
         }
     }
 
 
-    fun stopLocationUpdates(activity: MapsActivity) {
+    fun stopLocationUpdates(activity: MapsActivity, locationCallback: LocationCallback) {
         if (!mRequestingLocationUpdates) {
-            Log.d(tag, "stopLocationUpdates: updates never requested, no-op.")
+            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.")
             return
         }
 
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
-        mFusedLocationClient.removeLocationUpdates(object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                //super.onLocationResult(p0)
-                updateUI(activity, p0?.locations)
-            }
-        })
+        mFusedLocationClient.removeLocationUpdates(locationCallback)
                 .addOnCompleteListener(activity) {
                     mRequestingLocationUpdates = false
                     //setButtonsEnabledState();
                 }
 
 
+    }
+
+    fun isReady():Boolean {
+        if (mSettingsClient!=null){
+            return true
+        }
+        return false
     }
 
 
