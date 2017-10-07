@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 /**
- * Created by cmahajan on 9/23/17.
+ * Created by cmahajan on 10/6/17.
  */
 @Parcelize
-data class Station(val Name: String, val Lat: String, val Lon: String): Parcelable
+data class StationData(val stations: List<Station>): Parcelable

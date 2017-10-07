@@ -21,7 +21,7 @@ class FetchMetroStationsAsyncTask {
 
     interface OnFetchMetroStationsCompletionListener {
 
-        fun onFetchComplete(response: JsonArray)
+        fun onFetchComplete(response: List<Station>)
 
     }
 
@@ -53,14 +53,14 @@ class FetchMetroStationsAsyncTask {
             val editor : SharedPreferences.Editor = sharedPref.edit()
             editor.putString("wmataApiKey", API_KEY)
             editor.commit()
-            readMessagesArray(jsonObj.getAsJsonArray("Stations"))
-            listener.onFetchComplete(jsonObj.getAsJsonArray("Stations"))
+
+            listener.onFetchComplete(createMessagesArray(jsonObj.getAsJsonArray("Stations")))
 
         }
 
     }
 
-    private fun readMessagesArray(stationsArray: JsonArray?): List<Station> {
+    private fun createMessagesArray(stationsArray: JsonArray?): List<Station> {
         val items = mutableListOf<Station>()
         val gson = GsonBuilder().setPrettyPrinting().create() // for pretty print feature
 

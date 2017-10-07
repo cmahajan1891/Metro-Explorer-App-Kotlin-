@@ -18,11 +18,12 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.gson.JsonArray
 import edu.gwu.metroexplorer.R
 import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
 import edu.gwu.metroexplorer.async.FetchMetroStationsAsyncTask
 import edu.gwu.metroexplorer.location.*
+import edu.gwu.metroexplorer.model.Station
+import edu.gwu.metroexplorer.model.StationData
 import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_menu.*
 
@@ -34,6 +35,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
     private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
     private lateinit var locCallback: LocationCallback
+    private lateinit var metroDataSet: StationData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +54,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
         }
         val ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
-            override fun onFetchComplete(response: JsonArray) {
-                print(response)
+            override fun onFetchComplete(response: List<Station>) {
+                metroDataSet = StationData(response)
             }
         }
 
@@ -103,6 +105,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         selectStation.setOnClickListener {
             //TODO
+            val intent = Intent(this@MapsActivity, MetroStationsActivity::class.java)
+
+            intent.putExtra(
+                    "metroDataSet",
+                    metroDataSet
+            )
+            startActivity(intent)
         }
 
     }
