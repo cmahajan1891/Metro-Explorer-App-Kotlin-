@@ -26,6 +26,9 @@ import edu.gwu.metroexplorer.model.Station
 import edu.gwu.metroexplorer.model.StationData
 import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_menu.*
+import android.widget.EditText
+
+
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -97,10 +100,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         closestStation.setOnClickListener {
             //TODO
+            val intent = Intent(this@MapsActivity, LandmarkDetailActivity::class.java)
+            startActivity(intent)
         }
 
         favoriteLandMark.setOnClickListener {
             //TODO
+            val intent = Intent(this@MapsActivity, LandmarksActivity::class.java)
+            startActivity(intent)
         }
 
         selectStation.setOnClickListener {
