@@ -16,7 +16,7 @@
     tools:context="edu.gwu.metroexplorer.views.MapsActivity" />
 
     <Button
-        android:id="@+id/closestStation"
+        android:id="@+id/closestStationMaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -24,19 +24,19 @@
         android:text="Use Closest Station" />
 
     <Button
-        android:id="@+id/selectStation"
+        android:id="@+id/selectStationMaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="Select a Station"
-        android:layout_toLeftOf="@id/closestStation"/>
+        android:layout_toLeftOf="@id/closestStationMaps"/>
 
     <Button
-        android:id="@+id/favoriteLandMark"
+        android:id="@+id/favoriteLandMarkMaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Favorite Landmark"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/closestStation"/>
+        android:layout_toRightOf="@id/closestStationMaps"/>
 
 </RelativeLayout>

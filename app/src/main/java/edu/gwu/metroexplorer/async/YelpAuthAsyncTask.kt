@@ -6,6 +6,7 @@ import com.koushikdutta.ion.Ion
 import org.jetbrains.anko.doAsync
 import android.content.SharedPreferences
 import edu.gwu.metroexplorer.views.MapsActivity
+import edu.gwu.metroexplorer.views.MenuActivity
 
 
 private const val YELP_AUTH_URL = "https://api.yelp.com/oauth2/token"
@@ -23,7 +24,7 @@ class YelpAuthAsyncTask {
 
         fun onAuth(accessToken: String)
     }
-    fun execute(activity: MapsActivity, listener: OnAuthListener) {
+    fun execute(activity: MenuActivity, listener: OnAuthListener) {
 
         doAsync {
             var jsonObj : JsonObject = Ion.with(activity.baseContext)

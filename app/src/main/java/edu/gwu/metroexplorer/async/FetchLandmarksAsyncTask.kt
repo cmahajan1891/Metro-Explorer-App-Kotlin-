@@ -8,6 +8,7 @@ import com.koushikdutta.ion.Ion
 import edu.gwu.metroexplorer.views.MapsActivity
 import edu.gwu.metroexplorer.model.YelpLandmark
 import edu.gwu.metroexplorer.model.YelpSearch
+import edu.gwu.metroexplorer.views.MenuActivity
 import org.jetbrains.anko.doAsync
 
 
@@ -26,7 +27,7 @@ class FetchLandmarksAsyncTask {
         fun onFetchComplete(response: ArrayList<YelpLandmark>?)
     }
 
-    fun execute(activity: MapsActivity, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener) {
+    fun execute(activity: MenuActivity, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener) {
 
         val sharedPref: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
         val accessToken: String = sharedPref.getString("yelp_access_token", "")
@@ -45,7 +46,7 @@ class FetchLandmarksAsyncTask {
 
     }
 
-    fun getLandmarks(activity: MapsActivity, accessToken: String, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener){
+    fun getLandmarks(activity: MenuActivity, accessToken: String, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener){
 
         doAsync {
             var url = YELP_SEARCH_URL +"?latitude="+latitude+"&longitude="+longitude+"&radius_filter=8000"

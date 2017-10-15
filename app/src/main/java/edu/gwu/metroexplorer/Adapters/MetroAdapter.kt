@@ -17,8 +17,7 @@ class MetroAdapter(private val metroDataSet: StationData) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        holder?.stationNameView?.text = metroDataSet.stations[position].Name.toString()
-        holder?.stationLocationView?.text = metroDataSet.stations[position].Lat.toString()
+        holder?.stationNameView?.text = metroDataSet.stations[position].Name
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -28,7 +27,6 @@ class MetroAdapter(private val metroDataSet: StationData) : RecyclerView.Adapter
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
          val stationNameView: TextView = view.findViewById(R.id.StationName)
-         val stationLocationView: TextView = view.findViewById(R.id.StationLocation)
     }
 
 }

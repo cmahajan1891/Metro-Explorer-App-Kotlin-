@@ -1,19 +1,27 @@
 package edu.gwu.metroexplorer.location
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Looper
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.PermissionChecker.checkSelfPermission
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.gcm.Task
 import com.google.android.gms.location.*
-import edu.gwu.metroexplorer.views.MapsActivity
+import edu.gwu.metroexplorer.views.MenuActivity
+import java.net.URL
+
+
+
 
 
 /**
@@ -30,9 +38,11 @@ const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
 class LocationDetector {
 
+
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     private lateinit var mLocationSettingsRequest: LocationSettingsRequest
+
     private lateinit var mSettingsClient: SettingsClient
 
     private var mUpdateUIRequired: Boolean = true
@@ -42,11 +52,11 @@ class LocationDetector {
 
     val TAG = LocationDetector::class.java.simpleName
 
-    fun getFusedLocationClient(activity: MapsActivity) {
+    fun getFusedLocationClient(activity: MenuActivity) {
 
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-            mFusedLocationClient.flushLocations()
-            mSettingsClient = LocationServices.getSettingsClient(activity)
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        mFusedLocationClient.flushLocations()
+        mSettingsClient = LocationServices.getSettingsClient(activity)
 
     }
 
@@ -55,7 +65,7 @@ class LocationDetector {
      *
      * @param savedInstanceState The activity state saved in the Bundle.
      */
-    fun updateValuesFromBundle(savedInstanceState: Bundle?, activity: MapsActivity) {
+    fun updateValuesFromBundle(savedInstanceState: Bundle?, activity: MenuActivity) {
         if (savedInstanceState != null) {
             // Update the value of mRequestingLocationUpdates from the Bundle
 
@@ -78,10 +88,10 @@ class LocationDetector {
         }
     }
 
-    fun updateUI(activity: MapsActivity, locationResult: List<Location>) {
+    fun updateUI(activity: Activity, locationResult: List<Location>) {
         // Got last known location. In some rare situations this can be null.
         for (location in locationResult) {
-            if (location != null) {
+
                 // Logic to handle location object
                 mUpdateUIRequired = false
                 mCurrentLocation = location
@@ -89,7 +99,7 @@ class LocationDetector {
                 val lng = location.longitude
                 Toast.makeText(activity.baseContext, "Longitude: $lng Latitude: $lat", Toast.LENGTH_SHORT).show()
 
-            }
+
         }
     }
 
@@ -128,23 +138,23 @@ class LocationDetector {
         mLocationSettingsRequest = builder.build()
     }
 
-    /**
-     * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
-     * runtime permission has been granted.
-     */
+    @SuppressLint("MissingPermission")
+            /**
+             * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
+             * runtime permission has been granted.
+             */
 
-    //TODO implement the Permissions Logic
+            //TODO implement the Permissions Logic
 
-    fun startLocationUpdates(activity: MapsActivity, locCallback: LocationCallback) {
+    fun startLocationUpdates(activity: Activity, locCallback: LocationCallback) {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(activity) { locationResponse ->
                     Log.i(TAG, "All location settings are satisfied.")
                     locationResponse.locationSettingsStates
-                    if (checkSelfPermission(activity.baseContext,
-                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (checkPermissions(activity.applicationContext)) {
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                locCallback, null
+                                locCallback, Looper.myLooper()
                         ).addOnSuccessListener {
                             Log.d(TAG, "Request Location Updates Pass.")
                         }.addOnFailureListener {
@@ -152,7 +162,6 @@ class LocationDetector {
                         }
                     }
 
-//                    updateUI()
                 }
                 .addOnFailureListener(activity) { e ->
                     val statusCode = (e as ApiException).statusCode
@@ -176,12 +185,11 @@ class LocationDetector {
                             mRequestingLocationUpdates = false
                         }
                     }
-
-                    //updateUI()
                 }
     }
 
-    fun requestPermissions(activity: MapsActivity) {
+     fun requestPermissions(activity: MenuActivity) {
+
         val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -189,7 +197,6 @@ class LocationDetector {
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
-            //TODO provide permission Rationale
         } else {
             Log.i(TAG, "Requesting permission")
             // Request permission. It's possible this can be auto answered if device policy
@@ -198,12 +205,20 @@ class LocationDetector {
             ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_PERMISSIONS_REQUEST_CODE)
-            mRequestingLocationUpdates = true
+            //return
+
+
         }
+
+
     }
 
 
-    fun stopLocationUpdates(activity: MapsActivity, locationCallback: LocationCallback) {
+
+
+
+
+    fun stopLocationUpdates(activity: MenuActivity, locationCallback: LocationCallback) {
         if (!mRequestingLocationUpdates) {
             Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.")
             return
@@ -215,19 +230,24 @@ class LocationDetector {
         mFusedLocationClient.removeLocationUpdates(locationCallback)
                 .addOnCompleteListener(activity) {
                     mRequestingLocationUpdates = false
-                    //setButtonsEnabledState();
+
                 }
 
 
     }
 
-    fun isReady():Boolean {
-        if (mSettingsClient!=null){
+    fun checkPermissions(context: Context): Boolean {
+        val permissionState = ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+        return permissionState == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isReady(): Boolean {
+        if (mSettingsClient != null) {
             return true
         }
         return false
     }
-
 
 }
 

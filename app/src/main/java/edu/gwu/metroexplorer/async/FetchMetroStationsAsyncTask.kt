@@ -1,12 +1,12 @@
 package edu.gwu.metroexplorer.async
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
-import edu.gwu.metroexplorer.views.MapsActivity
 import edu.gwu.metroexplorer.model.Station
 import org.jetbrains.anko.doAsync
 
@@ -25,23 +25,23 @@ class FetchMetroStationsAsyncTask {
 
     }
 
-    fun execute(activity: MapsActivity, listener: OnFetchMetroStationsCompletionListener) {
+    fun execute(activity: Activity, listener: OnFetchMetroStationsCompletionListener) {
 
         doAsync {
 
-            var jsonObj: JsonObject? = null
+            var jsonObj: JsonObject?
 
             val sharedPref: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
             val wmataApiKey: String = sharedPref.getString("wmataApiKey", "")
 
-            jsonObj = if(wmataApiKey == null || wmataApiKey.isEmpty()) {
+            jsonObj = if (wmataApiKey.isEmpty()) {
 
                 Ion.with(activity.baseContext)
                         .load(WMATA_URL)
                         .addHeader("api_key", API_KEY)
                         .asJsonObject().get()
 
-            }else{
+            } else {
 
                 Ion.with(activity.baseContext)
                         .load(WMATA_URL)
@@ -50,7 +50,7 @@ class FetchMetroStationsAsyncTask {
 
             }
 
-            val editor : SharedPreferences.Editor = sharedPref.edit()
+            val editor: SharedPreferences.Editor = sharedPref.edit()
             editor.putString("wmataApiKey", API_KEY)
             editor.commit()
 
