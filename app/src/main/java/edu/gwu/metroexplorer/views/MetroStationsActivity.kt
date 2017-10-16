@@ -62,9 +62,9 @@ class MetroStationsActivity : AppCompatActivity() {
 //                        items.add(it)
 //                    }
                 }
-                MetroAdapter(StationData(items))
+                MetroAdapter(StationData(items), this@MetroStationsActivity)
             } else {
-                MetroAdapter(stationData)
+                MetroAdapter(stationData, this@MetroStationsActivity)
             }
 
             metroRecyclerView.adapter = metroAdapter
@@ -133,7 +133,7 @@ class MetroStationsActivity : AppCompatActivity() {
                     }
                 }
                 val stationData = StationData(items)
-                var metroAdapter = MetroAdapter(stationData)
+                var metroAdapter = MetroAdapter(stationData, this@MetroStationsActivity)
                 metroRecyclerView.adapter = metroAdapter
                 //metroRecyclerView.adapter.notifyDataSetChanged()
                 onCmpLst.onComplete()
