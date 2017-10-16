@@ -17,7 +17,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color" />
+        app:srcCompat="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
     <ImageView
         android:id="@+id/gradientView"
@@ -27,7 +30,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
     <TextView
         android:id="@+id/textView4"
@@ -44,7 +50,10 @@
         app:layout_constraintBottom_toTopOf="@+id/ratingBar"
         app:layout_constraintEnd_toEndOf="@+id/gradientView"
         app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toStartOf="@+id/gradientView" />
+        app:layout_constraintStart_toStartOf="@+id/gradientView"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -57,7 +66,10 @@
         android:progressTint="@android:color/holo_orange_dark"
         android:rating="3"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/gradientView" />
+        app:layout_constraintStart_toStartOf="@+id/gradientView"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
     <TextView
         android:id="@+id/isOpenTextView"
@@ -70,7 +82,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ratingBar" />
+        app:layout_constraintTop_toTopOf="@+id/ratingBar"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
     <TextView
         android:id="@+id/distance"
@@ -81,7 +96,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/isOpenTextView"
         app:layout_constraintEnd_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="@+id/isOpenTextView" />
+        app:layout_constraintTop_toTopOf="@+id/isOpenTextView"
+        android:clickable="true"
+        android:onClick="onClick"
+        />
 
 
 </android.support.constraint.ConstraintLayout>
