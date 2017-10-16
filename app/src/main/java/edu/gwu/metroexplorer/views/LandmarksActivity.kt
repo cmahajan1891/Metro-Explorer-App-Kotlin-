@@ -23,6 +23,10 @@ import edu.gwu.metroexplorer.R
 import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
 import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_landmarks.*
+import com.google.gson.reflect.TypeToken
+import com.google.android.gms.drive.metadata.CustomPropertyKey.fromJson
+
+
 
 
 class LandmarksActivity : AppCompatActivity() {
@@ -40,7 +44,7 @@ class LandmarksActivity : AppCompatActivity() {
 
         val listener = object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
 
-            override fun onFetchComplete(response: Array<YelpLandmark>?) {
+            override fun onFetchComplete(response: Array<YelpLandmark?>) {
                 runOnUiThread {
                     var landmarksAdapter = LandmarksAdapter(response, this@LandmarksActivity)
                     landmarksRecyclerView.adapter = landmarksAdapter
@@ -54,15 +58,19 @@ class LandmarksActivity : AppCompatActivity() {
             if (sharedPref.contains("FAVORITES")) {
                 val jsonFavorites = sharedPref.getString("FAVORITES", null)
                 val gson = Gson()
-                val favoriteItems = gson.fromJson(jsonFavorites,
-                        HashMap::class.java)
 
+                val favoriteItems:HashMap<String, YelpLandmark> = Gson().fromJson(jsonFavorites, object : TypeToken<HashMap<String, YelpLandmark>>() {
 
-                var favArray  = arrayOfNulls<YelpLandmark>(favoriteItems.size)
-                var favList = favoriteItems.toList()
-                favList.forEachIndexed { index, pair ->
-                    favArray[index] = pair.second as YelpLandmark
+                }.type)
+                
+
+                var favArray = arrayOfNulls<YelpLandmark>(favoriteItems.size)
+                var index = 0
+                favoriteItems.forEach {
+                    favArray[index] = it.value
+                    index++
                 }
+
                 var landmarksAdapter = LandmarksAdapter(favArray, this@LandmarksActivity)
                 landmarksRecyclerView.adapter = landmarksAdapter
             }
@@ -76,7 +84,7 @@ class LandmarksActivity : AppCompatActivity() {
 }
 
 
-class LandmarksAdapter(private val dataSet: Array<YelpLandmark>?, private val activity: LandmarksActivity) : RecyclerView.Adapter<LandmarksAdapter.ViewHolder>() {
+class LandmarksAdapter(private val dataSet: Array<YelpLandmark?>, private val activity: LandmarksActivity) : RecyclerView.Adapter<LandmarksAdapter.ViewHolder>() {
 
 
     //Array<YelpLandmark>
@@ -93,7 +101,7 @@ class LandmarksAdapter(private val dataSet: Array<YelpLandmark>?, private val ac
     private fun callIntent(position: Int) {
         Log.d("Clickable", "called")
         val intent = Intent(activity, LandmarkDetailActivity::class.java)
-        var landmark: YelpLandmark? = dataSet?.get(position)
+        var landmark: YelpLandmark? = dataSet.get(position)
         intent.putExtra("YELP_LANDMARK", landmark)
         activity.startActivity(intent)
     }

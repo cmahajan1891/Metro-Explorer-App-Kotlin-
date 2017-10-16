@@ -22,7 +22,7 @@ class FetchLandmarksAsyncTask {
 
     interface OnFetchLandmarksCompletionListener {
 
-        fun onFetchComplete(response: Array<YelpLandmark>?)
+        fun onFetchComplete(response: Array<YelpLandmark?>)
     }
 
     fun execute(activity: LandmarksActivity, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener) {
@@ -59,7 +59,7 @@ class FetchLandmarksAsyncTask {
                 var search: YelpSearch = gson.fromJson(jsonObj, YelpSearch::class.java)
                 listener.onFetchComplete(search.businesses)
             } else {
-                listener.onFetchComplete(null)
+                listener.onFetchComplete(emptyArray())
             }
 
         }

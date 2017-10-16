@@ -14,7 +14,7 @@ data class YelpCoordinates(@SerializedName("latitude") val latitude: String,
                            @SerializedName("longitude") val longitude: Double) : Parcelable
 
 @Parcelize
-data class YelpSearch(@SerializedName("businesses") val businesses: Array<YelpLandmark>) : Parcelable
+data class YelpSearch(@SerializedName("businesses") val businesses: Array<YelpLandmark?>) : Parcelable
 
 
 @Parcelize
