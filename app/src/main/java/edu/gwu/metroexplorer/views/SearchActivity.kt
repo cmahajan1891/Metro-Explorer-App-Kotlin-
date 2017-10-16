@@ -1,7 +1,7 @@
 package edu.gwu.metroexplorer.views
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import edu.gwu.metroexplorer.R
 
 class SearchActivity : AppCompatActivity() {

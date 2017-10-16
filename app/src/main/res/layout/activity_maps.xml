@@ -7,13 +7,13 @@
     tools:context="edu.gwu.metroexplorer.views.MenuActivity">
 
 
-<fragment
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    tools:context="edu.gwu.metroexplorer.views.MapsActivity" />
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        tools:context="edu.gwu.metroexplorer.views.MapsActivity" />
 
     <Button
         android:id="@+id/closestStationMaps"
@@ -28,15 +28,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Select a Station"
-        android:layout_toLeftOf="@id/closestStationMaps"/>
+        android:layout_toLeftOf="@id/closestStationMaps"
+        android:text="Select a Station" />
 
     <Button
         android:id="@+id/favoriteLandMarkMaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Favorite Landmark"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/closestStationMaps"/>
+        android:layout_toRightOf="@id/closestStationMaps"
+        android:text="Favorite Landmark" />
 
 </RelativeLayout>

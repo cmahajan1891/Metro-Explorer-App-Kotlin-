@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Looper
 import android.support.v4.app.ActivityCompat
@@ -15,13 +14,8 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.gcm.Task
 import com.google.android.gms.location.*
 import edu.gwu.metroexplorer.views.MenuActivity
-import java.net.URL
-
-
-
 
 
 /**
@@ -92,12 +86,12 @@ class LocationDetector {
         // Got last known location. In some rare situations this can be null.
         for (location in locationResult) {
 
-                // Logic to handle location object
-                mUpdateUIRequired = false
-                mCurrentLocation = location
-                val lat = location.latitude
-                val lng = location.longitude
-                Toast.makeText(activity.baseContext, "Longitude: $lng Latitude: $lat", Toast.LENGTH_SHORT).show()
+            // Logic to handle location object
+            mUpdateUIRequired = false
+            mCurrentLocation = location
+            val lat = location.latitude
+            val lng = location.longitude
+            Toast.makeText(activity.baseContext, "Longitude: $lng Latitude: $lat", Toast.LENGTH_SHORT).show()
 
 
         }
@@ -188,7 +182,7 @@ class LocationDetector {
                 }
     }
 
-     fun requestPermissions(activity: MenuActivity) {
+    fun requestPermissions(activity: MenuActivity) {
 
         val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -212,10 +206,6 @@ class LocationDetector {
 
 
     }
-
-
-
-
 
 
     fun stopLocationUpdates(activity: MenuActivity, locationCallback: LocationCallback) {

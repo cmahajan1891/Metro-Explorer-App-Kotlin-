@@ -4,106 +4,106 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_margin="16dp"
-    android:elevation="20dp"
+    android:layout_marginBottom="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="60dp"
     android:background="@drawable/rect"
-    >
-
-
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:id="@+id/StationView"
+    android:elevation="20dp"
+    android:orientation="vertical"
 
     >
 
-    <TextView
 
-        android:id="@+id/StationName"
+    <LinearLayout
+        android:id="@+id/StationView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="@string/placeholder"
-        android:textColorHighlight="@color/colorPrimaryDark"
-        android:clickable="true"
-        android:onClick="onClick"
+        android:orientation="horizontal"
 
-        />
+        >
 
-</LinearLayout>
+        <TextView
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_weight="1">
+            android:id="@+id/StationName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:maxLines="1"
+            android:onClick="onClick"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text="@string/placeholder"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColorHighlight="@color/colorPrimaryDark"
 
-    <TextView
-        android:id="@+id/line1"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="0.33"
-        android:maxLines="1"
-        android:padding="2dp"
-        android:text="@string/placeholder"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/white"
-        android:textColorHighlight="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/line2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="0.33"
-        android:maxLines="1"
-        android:padding="2dp"
-        android:text="@string/placeholder"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/white"
-        android:textColorHighlight="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        <TextView
+            android:id="@+id/line1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="0.33"
+            android:clickable="true"
+            android:maxLines="1"
+            android:onClick="onClick"
+            android:padding="2dp"
+            android:text="@string/placeholder"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            android:textColorHighlight="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/line3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="0.33"
-        android:maxLines="1"
-        android:padding="2dp"
-        android:text="@string/placeholder"
-        android:layout_marginRight="16dp"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/white"
-        android:textColorHighlight="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        <TextView
+            android:id="@+id/line2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="0.33"
+            android:clickable="true"
+            android:maxLines="1"
+            android:onClick="onClick"
+            android:padding="2dp"
+            android:text="@string/placeholder"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            android:textColorHighlight="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/line3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="0.33"
+            android:clickable="true"
+            android:maxLines="1"
+            android:onClick="onClick"
+            android:padding="2dp"
+            android:text="@string/placeholder"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            android:textColorHighlight="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 </LinearLayout>

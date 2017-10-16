@@ -2,7 +2,6 @@ package edu.gwu.metroexplorer.views
 
 import android.app.SearchManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -19,6 +18,7 @@ import edu.gwu.metroexplorer.model.Station
 import edu.gwu.metroexplorer.model.StationData
 import kotlinx.android.synthetic.main.activity_metro_stations.*
 
+
 class MetroStationsActivity : AppCompatActivity() {
 
     interface onCompleteListener {
@@ -33,65 +33,56 @@ class MetroStationsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_metro_stations)
+
         setSupportActionBar(search_bar as Toolbar)
         metroRecyclerView = metro_Station_recycler_view
-        progressBar = indeterminateBar as ProgressBar
 
+        progressBar = indeterminateBar as ProgressBar
         metroRecyclerView.setHasFixedSize(true)
 
         // use a linear layout manager
         var metroLayoutManager = LinearLayoutManager(this)
         metroRecyclerView.layoutManager = metroLayoutManager
 
-        // specify an adapter (see also next example)
-        if (intent.action != Intent.ACTION_SEARCH) {
+        var ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
+            override fun onFetchComplete(response: List<Station>) {
+                runOnUiThread {
+                    stationData = StationData(response)
 
-            stationData = intent.getParcelableExtra("metroDataSet")
-            var findClosest = intent.getBooleanExtra("findClosest", false)
-
-            var metroAdapter = if (findClosest) {
-                val items = mutableListOf<Station>()
-                val lat = intent.getDoubleExtra("lat", 0.0)
-                val long = intent.getDoubleExtra("long", 0.0)
-                stationData.stations.forEach {
-                    //val dis = distance(0.0, 0.0, it.Lat.toDouble(), it.Lon.toDouble(), "K")
-                    //val dis2 = distance(0.0,0.0, lat, long,"K")
-//                    val diff = Math.sqrt(Math.pow(Math.abs(lat) - Math.abs(it.Lat.toDouble()), 2.0)
-//                            + Math.pow(Math.abs(long) - Math.abs(it.Lon.toDouble()), 2.0))
-//                    if (diff < 20) {
-//                        items.add(it)
-//                    }
-                }
-                MetroAdapter(StationData(items), this@MetroStationsActivity)
-            } else {
-                MetroAdapter(stationData, this@MetroStationsActivity)
-            }
-
-            metroRecyclerView.adapter = metroAdapter
-
-        } else {
-
-            showLoading(true)
+                    // specify an adapter (see also next example)
 
 
-            var ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
-                override fun onFetchComplete(response: List<Station>) {
-                    val stData = StationData(response)
+                    var findClosest = intent.getBooleanExtra("findClosest", false)
 
-                    val onCmpLst = object : onCompleteListener {
-                        override fun onComplete() {
-                            showLoading(false)
+                    var metroAdapter = if (findClosest) {
+                        val items = mutableListOf<Station>()
+                        val lat = intent.getDoubleExtra("lat", 0.0)
+                        val long = intent.getDoubleExtra("long", 0.0)
+                        stationData.stations.forEach {
+
+                            val dis = distance(lat, long, it.Lat.toDouble(), it.Lon.toDouble(), "K")
+                            Log.d("Distance", "$dis")
+                            if (dis.toDouble() <= 1000.0) {
+                                items.add(it)
+                            }
+
                         }
+                        MetroAdapter(StationData(items), this@MetroStationsActivity)
+                    } else {
+                        MetroAdapter(stationData, this@MetroStationsActivity)
                     }
-                    handleIntent(intent, stData, onCmpLst)
+
+                    metroRecyclerView.adapter = metroAdapter
+
 
                 }
             }
-
-            fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
-            fetchMetroStationAsyncTask.execute(this@MetroStationsActivity, ls)
 
         }
+
+        fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
+        fetchMetroStationAsyncTask.execute(this@MetroStationsActivity, ls)
+
     }
 
     private fun showLoading(show: Boolean) {
@@ -107,37 +98,76 @@ class MetroStationsActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.options_menu, menu)
 
-        // Associate searchable configuration with the SearchView
+        //Associate searchable configuration with the SearchView
         val searchManager: SearchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = menu?.findItem(R.id.filter)?.actionView as SearchView
 
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(componentName))
 
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //Log.d("onQueryTextChangeListener", "called.")
+
+
+                val onCmpLst = object : onCompleteListener {
+                    override fun onComplete() {
+                        showLoading(false)
+                    }
+                }
+                handleIntent(stationData, onCmpLst, newText)
+
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                //Log.d("onQueryTextSubmitListener", "called.")
+
+                val onCmpLst = object : onCompleteListener {
+                    override fun onComplete() {
+                        showLoading(false)
+                    }
+                }
+                handleIntent(stationData, onCmpLst, query)
+                return true
+            }
+
+        })
+
+
+
         return true
     }
 
-    private fun handleIntent(intent: Intent?, stData: StationData, onCmpLst: onCompleteListener) {
+    private fun handleIntent(stData: StationData, onCmpLst: onCompleteListener, changedText: String?) {
         runOnUiThread {
             //stuff that updates ui
             //use the query to search your data somehow
-            if (Intent.ACTION_SEARCH == intent?.action) {
-                val query = intent.getStringExtra(SearchManager.QUERY)
-                val items = mutableListOf<Station>()
-                Log.d("query string is: ", query.toString())
-                stData.stations.forEach {
-                    Log.d("Station: ", it.Name)
-                    //TODO Not working for all the Stations. Correct the filtering.
-                    if (it.Name.capitalize().contains(query.capitalize())) {
+            showLoading(true)
+            //val query = intent?.getStringExtra(SearchManager.QUERY)
+            val items = mutableListOf<Station>()
+
+            Log.d("query string is: ", changedText)
+            stData.stations.forEach {
+                Log.d("Station: ", it.Name)
+
+                if (changedText != null) {
+
+                    if (it.Name.capitalize().startsWith(changedText.capitalize())) {
                         items.add(it)
                     }
+
                 }
-                val stationData = StationData(items)
-                var metroAdapter = MetroAdapter(stationData, this@MetroStationsActivity)
-                metroRecyclerView.adapter = metroAdapter
-                //metroRecyclerView.adapter.notifyDataSetChanged()
-                onCmpLst.onComplete()
+
             }
+            val stationData = StationData(items)
+
+            var metroAdapter = MetroAdapter(stationData, this@MetroStationsActivity)
+            metroRecyclerView.adapter = metroAdapter
+            metroRecyclerView.adapter.notifyDataSetChanged()
+            onCmpLst.onComplete()
+
         }
     }
 

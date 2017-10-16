@@ -3,11 +3,9 @@ package edu.gwu.metroexplorer.views
 
 import android.content.Intent
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import edu.gwu.metroexplorer.R
-import kotlinx.android.synthetic.main.activity_landmarks.*
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,13 +14,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import edu.gwu.metroexplorer.model.StationData
 import com.squareup.picasso.Picasso
-import edu.gwu.metroexplorer.R.id.imageView
+import edu.gwu.metroexplorer.R
 import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
-import edu.gwu.metroexplorer.async.FetchMetroStationsAsyncTask
 import edu.gwu.metroexplorer.model.YelpLandmark
-import kotlinx.android.synthetic.main.view_landmark_detail.view.*
+import kotlinx.android.synthetic.main.activity_landmarks.*
 
 
 class LandmarksActivity : AppCompatActivity() {
@@ -36,7 +32,7 @@ class LandmarksActivity : AppCompatActivity() {
         // use a linear layout manager
         landmarksRecyclerView.layoutManager = LinearLayoutManager(this)
         var lat = getIntent().getDoubleExtra(getString(R.string.lat), 91.0)
-        var lon =  getIntent().getDoubleExtra(getString(R.string.lon), 181.0)
+        var lon = getIntent().getDoubleExtra(getString(R.string.lon), 181.0)
 
         val listener = object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
 
@@ -48,9 +44,9 @@ class LandmarksActivity : AppCompatActivity() {
             }
         }
 
-        if(lat > 90 || lon > 180){
+        if (lat > 90 || lon > 180) {
 
-        }else{
+        } else {
             fetchLandmarksTask = FetchLandmarksAsyncTask()
             fetchLandmarksTask.execute(this@LandmarksActivity, lat.toString(),
                     "" + lon.toString(), listener)
@@ -59,7 +55,7 @@ class LandmarksActivity : AppCompatActivity() {
 }
 
 
-class LandmarksAdapter(private val dataSet: Array<YelpLandmark>? , private val activity: LandmarksActivity) : RecyclerView.Adapter<LandmarksAdapter.ViewHolder>() {
+class LandmarksAdapter(private val dataSet: Array<YelpLandmark>?, private val activity: LandmarksActivity) : RecyclerView.Adapter<LandmarksAdapter.ViewHolder>() {
 
 
     //Array<YelpLandmark>
@@ -73,10 +69,10 @@ class LandmarksAdapter(private val dataSet: Array<YelpLandmark>? , private val a
         val distance: TextView = view.findViewById(R.id.distance)
     }
 
-    private fun callIntent(position: Int){
+    private fun callIntent(position: Int) {
         Log.d("Clickable", "called")
         val intent = Intent(activity, LandmarkDetailActivity::class.java)
-        var landmark : YelpLandmark? = dataSet?.get(position)
+        var landmark: YelpLandmark? = dataSet?.get(position)
         intent.putExtra("YELP_LANDMARK", landmark)
         activity.startActivity(intent)
     }
@@ -89,16 +85,16 @@ class LandmarksAdapter(private val dataSet: Array<YelpLandmark>? , private val a
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
 
-        var landmark : YelpLandmark? = dataSet?.get(position)
+        var landmark: YelpLandmark? = dataSet?.get(position)
         Picasso.with(activity).load(landmark?.imageURL).into(holder?.imageView)
-        holder?.imageView?.scaleType =ImageView.ScaleType.CENTER_CROP
+        holder?.imageView?.scaleType = ImageView.ScaleType.CENTER_CROP
         holder?.nameTextView?.text = landmark?.name
         holder?.ratingBar?.rating = landmark?.rating!!
         holder?.distance?.text = getDistanceText(landmark?.distance)
-        if(landmark?.isClosed){
-            holder?.isOpenTextView?.text =  activity.getString(R.string.closed)
+        if (landmark?.isClosed) {
+            holder?.isOpenTextView?.text = activity.getString(R.string.closed)
             holder?.isOpenTextView?.setTextColor(Color.RED)
-        }else{
+        } else {
             holder?.isOpenTextView?.text = activity.getString(R.string.open)
             holder?.isOpenTextView?.setTextColor(Color.GREEN)
         }
@@ -119,12 +115,14 @@ class LandmarksAdapter(private val dataSet: Array<YelpLandmark>? , private val a
         })
 
     }
+
     fun getDistanceText(distance: Double): String {
-        var miles: Double = distance/1609.344
+        var miles: Double = distance / 1609.344
         return "%.2f".format(miles) + " Miles"
     }
+
     override fun getItemCount(): Int {
-        if(dataSet == null)
+        if (dataSet == null)
             return 0
         return dataSet.count()
     }

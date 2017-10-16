@@ -17,49 +17,38 @@ import edu.gwu.metroexplorer.async.FetchMetroStationsAsyncTask
 import edu.gwu.metroexplorer.location.*
 import edu.gwu.metroexplorer.model.Station
 import edu.gwu.metroexplorer.model.StationData
-import edu.gwu.metroexplorer.model.YelpLandmark
 import kotlinx.android.synthetic.main.activity_menu.*
 
 
 class MenuActivity : AppCompatActivity() {
 
     private lateinit var locationDetector: LocationDetector
-    private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
-//    private lateinit var locCallback: LocationCallback
-    private lateinit var metroDataSet: StationData
+    private lateinit var locCallback: LocationCallback
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        val ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
-            override fun onFetchComplete(response: List<Station>) {
-                Log.d("MetroDataSet", "Populated")
-                metroDataSet = StationData(response)
-            }
-        }
-
         locationDetector = LocationDetector()
 
-        locationDetector.mRequestingLocationUpdates = false
+        locationDetector.mRequestingLocationUpdates = true
         locationDetector.updateValuesFromBundle(savedInstanceState, this)
 
         locationDetector.getFusedLocationClient(this)
         locationDetector.createLocationRequest()
         locationDetector.buildLocationSettingsRequest()
 
-        fetchMetroStationAsyncTask = FetchMetroStationsAsyncTask()
-        fetchMetroStationAsyncTask.execute(this@MenuActivity, ls)
+        locCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
 
+                locationDetector.mCurrentLocation = locationResult.lastLocation
+                //locationDetector.updateUI(this@MenuActivity, listOf(locationDetector.mCurrentLocation) as List<Location>)
+            }
+        }
 
         closestStation.setOnClickListener {
             val intent = Intent(this@MenuActivity, MetroStationsActivity::class.java)
-
-            intent.putExtra(
-                    "metroDataSet",
-                    metroDataSet
-            )
             intent.putExtra("lat", locationDetector.mCurrentLocation?.latitude)
             intent.putExtra("long", locationDetector.mCurrentLocation?.longitude)
             intent.putExtra("findClosest", true)
@@ -70,19 +59,16 @@ class MenuActivity : AppCompatActivity() {
             val intent = Intent(this@MenuActivity, LandmarksActivity::class.java)
 
             intent.putExtra(getString(R.string.lat), 38.900647)
-            intent.putExtra(getString(R.string.lon),  -77.050370)
+            intent.putExtra(getString(R.string.lon), -77.050370)
             startActivity(intent)
         }
 
         selectStation.setOnClickListener {
-            val intent = Intent(this@MenuActivity, MetroStationsActivity::class.java)
 
-            intent.putExtra(
-                    "metroDataSet",
-                    metroDataSet
-            )
+            val intent = Intent(this@MenuActivity, MetroStationsActivity::class.java)
             intent.putExtra("findClosest", false)
             startActivity(intent)
+
         }
 
     }
@@ -92,7 +78,7 @@ class MenuActivity : AppCompatActivity() {
         // location updates if the user has requested them.
         if (locationDetector.isReady()) {
             if (locationDetector.mRequestingLocationUpdates && locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
-//                locationDetector.startLocationUpdates(this, locCallback)
+                locationDetector.startLocationUpdates(this, locCallback)
             } else if (!locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
                 locationDetector.requestPermissions(this@MenuActivity)
                 //return
@@ -104,7 +90,7 @@ class MenuActivity : AppCompatActivity() {
     override fun onPause() {
         // Remove location updates to save battery.
         if (locationDetector.isReady()) {
-//            locationDetector.stopLocationUpdates(this, locCallback)
+            locationDetector.stopLocationUpdates(this, locCallback)
         }
         super.onPause()
     }

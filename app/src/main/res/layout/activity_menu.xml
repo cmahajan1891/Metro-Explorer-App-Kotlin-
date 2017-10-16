@@ -12,21 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Use Closest Station "/>
+        android:text="Use Closest Station " />
 
     <Button
         android:id="@+id/selectStation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Select a Station"/>
+        android:text="Select a Station" />
 
     <Button
         android:id="@+id/favoriteLandMark"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Favorite Landmark"/>
+        android:text="Favorite Landmark" />
 
 
 </LinearLayout>

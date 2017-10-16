@@ -5,12 +5,10 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
-import edu.gwu.metroexplorer.views.MapsActivity
 import edu.gwu.metroexplorer.model.YelpLandmark
 import edu.gwu.metroexplorer.model.YelpSearch
 import edu.gwu.metroexplorer.views.LandmarksActivity
 import org.jetbrains.anko.doAsync
-
 
 
 /**
@@ -32,7 +30,7 @@ class FetchLandmarksAsyncTask {
         val sharedPref: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
         val accessToken: String = sharedPref.getString("yelp_access_token", "")
 
-        if(accessToken== null || accessToken.length==0) {
+        if (accessToken == null || accessToken.length == 0) {
             var yelpAuthTask: YelpAuthAsyncTask = YelpAuthAsyncTask()
             val authListner = object : YelpAuthAsyncTask.OnAuthListener {
                 override fun onAuth(accessToken: String) {
@@ -40,27 +38,27 @@ class FetchLandmarksAsyncTask {
                 }
             }
             yelpAuthTask.execute(activity, authListner)
-        }else{
+        } else {
             getLandmarks(activity, accessToken, latitude, longitude, listener)
         }
 
     }
 
-    fun getLandmarks(activity: LandmarksActivity, accessToken: String, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener){
+    fun getLandmarks(activity: LandmarksActivity, accessToken: String, latitude: String, longitude: String, listener: OnFetchLandmarksCompletionListener) {
 
         doAsync {
-            var url = YELP_SEARCH_URL +"?latitude="+latitude+"&longitude="+longitude+"&radius_filter=8000"
-            var jsonObj : JsonObject = Ion.with(activity.baseContext)
+            var url = YELP_SEARCH_URL + "?latitude=" + latitude + "&longitude=" + longitude + "&radius_filter=8000"
+            var jsonObj: JsonObject = Ion.with(activity.baseContext)
                     .load(url)
                     .addHeader("Authorization", "Bearer " + accessToken)
                     .asJsonObject()
                     .get()
             val gson = Gson()
 
-            if(jsonObj != null){
+            if (jsonObj != null) {
                 var search: YelpSearch = gson.fromJson(jsonObj, YelpSearch::class.java)
                 listener.onFetchComplete(search.businesses)
-            }else{
+            } else {
                 listener.onFetchComplete(null)
             }
 

@@ -13,27 +13,25 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="6dp"
+        android:clickable="true"
+        android:onClick="onClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:srcCompat="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color" />
 
     <ImageView
         android:id="@+id/gradientView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clickable="true"
+        android:onClick="onClick"
         android:src="@drawable/image_gradient_overlay"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/nameTextView"
@@ -42,7 +40,9 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
+        android:clickable="true"
         android:gravity="bottom"
+        android:onClick="onClick"
         android:text="Burger Tap and Shake Foggy Bottom"
         android:textColor="?android:attr/colorBackground"
         android:textSize="24sp"
@@ -50,10 +50,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ratingBar"
         app:layout_constraintEnd_toEndOf="@+id/gradientView"
         app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toStartOf="@+id/gradientView"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:layout_constraintStart_toStartOf="@+id/gradientView" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -62,19 +59,20 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="14dp"
+        android:clickable="true"
         android:numStars="5"
+        android:onClick="onClick"
         android:progressTint="@android:color/holo_orange_dark"
         android:rating="3"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/gradientView"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:layout_constraintStart_toStartOf="@+id/gradientView" />
 
     <TextView
         android:id="@+id/isOpenTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onClick"
         android:text="Open Now"
         android:textColor="@android:color/holo_green_light"
         android:textStyle="bold"
@@ -82,25 +80,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ratingBar"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:layout_constraintTop_toTopOf="@+id/ratingBar" />
 
     <TextView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="14dp"
+        android:clickable="true"
+        android:onClick="onClick"
         android:text="1.2 Miles"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/isOpenTextView"
         app:layout_constraintEnd_toEndOf="@+id/nameTextView"
-        app:layout_constraintTop_toTopOf="@+id/isOpenTextView"
-        android:clickable="true"
-        android:onClick="onClick"
-        />
+        app:layout_constraintTop_toTopOf="@+id/isOpenTextView" />
 
 
 </android.support.constraint.ConstraintLayout>

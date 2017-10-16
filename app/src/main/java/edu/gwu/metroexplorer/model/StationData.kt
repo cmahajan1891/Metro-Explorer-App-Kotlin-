@@ -7,4 +7,4 @@ import kotlinx.android.parcel.Parcelize
  * Created by cmahajan on 10/6/17.
  */
 @Parcelize
-data class StationData(val stations: List<Station>): Parcelable
+data class StationData(val stations: List<Station>) : Parcelable

@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import edu.gwu.metroexplorer.R
@@ -37,17 +36,14 @@ class MetroAdapter(private val metroDataSet: StationData, private val metroStati
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        if (position == 0) {
-            holder?.layout?.setPadding(0, 160, 0, 0)
-        }
 
         holder?.stationNameView?.text = metroDataSet.stations[position].Name
         holder?.lineView1?.text = metroDataSet.stations[position].LineCode1
         holder?.lineView2?.text = metroDataSet.stations[position].LineCode2
         holder?.lineView3?.text = metroDataSet.stations[position].LineCode3
-        if (metroDataSet.stations[position].LineCode1 != null) map[holder?.lineView1?.text.toString()]?.let { holder?.lineView1?.setBackgroundColor(it) }
-        if (metroDataSet.stations[position].LineCode2 != null) map[holder?.lineView2?.text.toString()]?.let { holder?.lineView2?.setBackgroundColor(it) }
-        if (metroDataSet.stations[position].LineCode3 != null) map[holder?.lineView3?.text.toString()]?.let { holder?.lineView3?.setBackgroundColor(it) }
+        if (holder?.lineView1 != null) map[holder?.lineView1?.text.toString()]?.let { holder?.lineView1?.setBackgroundColor(it) }
+        if (holder?.lineView2 != null) map[holder?.lineView2?.text.toString()]?.let { holder?.lineView2?.setBackgroundColor(it) }
+        if (holder?.lineView3 != null) map[holder?.lineView3?.text.toString()]?.let { holder?.lineView3?.setBackgroundColor(it) }
 
         holder?.stationNameView?.setOnClickListener {
             callIntent(metroDataSet, position)
@@ -67,7 +63,7 @@ class MetroAdapter(private val metroDataSet: StationData, private val metroStati
 
     }
 
-    private fun callIntent(metroDataSet:StationData, position:Int){
+    private fun callIntent(metroDataSet: StationData, position: Int) {
         Log.d("Clickable", "called")
         val intent = Intent(metroStationsActivity, LandmarksActivity::class.java)
         intent.putExtra(metroStationsActivity.getString(R.string.lat), metroDataSet.stations[position].Lat.toDouble())
@@ -86,7 +82,7 @@ class MetroAdapter(private val metroDataSet: StationData, private val metroStati
         val lineView1: TextView = view.findViewById(R.id.line1)
         val lineView2: TextView = view.findViewById(R.id.line2)
         val lineView3: TextView = view.findViewById(R.id.line3)
-        //val bgColor: TextView = view.findViewById(R.id.StationName)
+
         val layout: LinearLayout = view.findViewById(R.id.StationView)
     }
 
