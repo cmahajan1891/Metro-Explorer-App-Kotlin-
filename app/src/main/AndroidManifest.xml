@@ -40,7 +40,7 @@
 
         <activity
             android:name=".views.MenuActivity"
-            android:label="Menu">
+            android:label="Metro Explorer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
