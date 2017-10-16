@@ -6,46 +6,44 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import edu.gwu.metroexplorer.BuildConfig
 import edu.gwu.metroexplorer.R
-import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
-import edu.gwu.metroexplorer.async.FetchMetroStationsAsyncTask
 import edu.gwu.metroexplorer.location.*
-import edu.gwu.metroexplorer.model.Station
-import edu.gwu.metroexplorer.model.StationData
 import kotlinx.android.synthetic.main.activity_menu.*
 
 
 class MenuActivity : AppCompatActivity() {
 
-    private lateinit var locationDetector: LocationDetector
+    lateinit var locationDetector: LocationDetector
     private lateinit var locCallback: LocationCallback
 
+    private val TAG = "MenuActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        locationDetector = LocationDetector()
-
-        locationDetector.mRequestingLocationUpdates = true
-        locationDetector.updateValuesFromBundle(savedInstanceState, this)
-
-        locationDetector.getFusedLocationClient(this)
-        locationDetector.createLocationRequest()
-        locationDetector.buildLocationSettingsRequest()
-
         locCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
 
                 locationDetector.mCurrentLocation = locationResult.lastLocation
-                //locationDetector.updateUI(this@MenuActivity, listOf(locationDetector.mCurrentLocation) as List<Location>)
+                Toast.makeText(this@MenuActivity, "Latitude: "+ locationDetector.mCurrentLocation?.latitude +"Longitude: "+ locationDetector.mCurrentLocation?.longitude, Toast.LENGTH_LONG).show()
             }
         }
+
+        locationDetector = LocationDetector()
+
+        locationDetector.prepareLocationDetector(this@MenuActivity, savedInstanceState, locCallback)
 
         closestStation.setOnClickListener {
             val intent = Intent(this@MenuActivity, MetroStationsActivity::class.java)
@@ -74,25 +72,21 @@ class MenuActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        // Within {@code onPause()}, we remove location updates. Here, we resume receiving
-        // location updates if the user has requested them.
-        if (locationDetector.isReady()) {
-            if (locationDetector.mRequestingLocationUpdates && locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
-                locationDetector.startLocationUpdates(this, locCallback)
-            } else if (!locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
-                locationDetector.requestPermissions(this@MenuActivity)
-                //return
-            }
-        }
+
         super.onResume()
+        if (locationDetector.checkPermissions()) {
+            locationDetector.startLocationUpdates()
+        } else if (!locationDetector.checkPermissions()) {
+            locationDetector.requestPermissions()
+        }
+
+        updateUI()
     }
 
     override fun onPause() {
-        // Remove location updates to save battery.
-        if (locationDetector.isReady()) {
-            locationDetector.stopLocationUpdates(this, locCallback)
-        }
+
         super.onPause()
+        locationDetector.stopLocationUpdates()
     }
 
     override fun onDestroy() {
@@ -104,32 +98,40 @@ class MenuActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    fun updateUI(){
+
+    }
+
     /**
      * Stores activity data in the Bundle.
      */
-    public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
-        savedInstanceState?.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, locationDetector.mRequestingLocationUpdates)
-        savedInstanceState?.putParcelable(KEY_LOCATION, locationDetector.mCurrentLocation)
+    override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+        savedInstanceState!!.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, locationDetector.mRequestingLocationUpdates!!)
+        savedInstanceState.putParcelable(KEY_LOCATION, locationDetector.mCurrentLocation)
+        savedInstanceState.putString(KEY_LAST_UPDATED_TIME_STRING, locationDetector.mLastUpdateTime)
         super.onSaveInstanceState(savedInstanceState)
     }
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-
-        Log.i(locationDetector.TAG, "onRequestPermissionResult")
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        Log.i(TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults.isEmpty()) {
+            if (grantResults.size <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(locationDetector.TAG, "User interaction was cancelled.")
+                Log.i(TAG, "User interaction was cancelled.")
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (locationDetector.mRequestingLocationUpdates) {
-                    Log.i(locationDetector.TAG, "Permission granted, updates requested, starting location updates")
-//                    locationDetector.startLocationUpdates(this, locCallback)
+                if (locationDetector.mRequestingLocationUpdates!!) {
+                    Log.i(TAG, "Permission granted, updates requested, starting location updates")
+                    locationDetector.startLocationUpdates()
                 }
+            } else {
+                // TODO: Permission denied.
             }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -137,18 +139,17 @@ class MenuActivity : AppCompatActivity() {
         // Check for the integer request code originally supplied to startResolutionForResult().
             REQUEST_CHECK_SETTINGS -> when (resultCode) {
                 Activity.RESULT_OK -> {
-                    Log.i(locationDetector.TAG, "User agreed to make required location settings changes.")
+                    Log.i(TAG, "User agreed to make required location settings changes.")
                     locationDetector.mRequestingLocationUpdates = true
                 }
                 Activity.RESULT_CANCELED -> {
-                    Log.i(locationDetector.TAG, "User chose not to make required location settings changes.")
+                    Log.i(TAG, "User chose not to make required location settings changes.")
                     locationDetector.mRequestingLocationUpdates = false
-                    locationDetector.updateUI(this, listOf(locationDetector.mCurrentLocation) as List<Location>)
+//                    locationDetector.updateUI(this, listOf(locationDetector.mCurrentLocation) as List<Location>)
                 }
 
             }// Nothing to do. startLocationupdates() gets called in onResume again.
         }
     }
-
 
 }
