@@ -25,8 +25,7 @@ class MenuActivity : AppCompatActivity() {
 
     private lateinit var locationDetector: LocationDetector
     private lateinit var fetchMetroStationAsyncTask: FetchMetroStationsAsyncTask
-    private lateinit var fetchLandmarksTask: FetchLandmarksAsyncTask
-    private lateinit var locCallback: LocationCallback
+//    private lateinit var locCallback: LocationCallback
     private lateinit var metroDataSet: StationData
 
 
@@ -34,12 +33,6 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        val listner =
-                object : FetchLandmarksAsyncTask.OnFetchLandmarksCompletionListener {
-                    override fun onFetchComplete(response: ArrayList<YelpLandmark>?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
-                }
         val ls = object : FetchMetroStationsAsyncTask.OnFetchMetroStationsCompletionListener {
             override fun onFetchComplete(response: List<Station>) {
                 Log.d("MetroDataSet", "Populated")
@@ -47,22 +40,9 @@ class MenuActivity : AppCompatActivity() {
             }
         }
 
-        locCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-
-                locationDetector.mCurrentLocation = locationResult.lastLocation
-                //locationDetector.updateUI(this@MenuActivity, listOf(locationDetector.mCurrentLocation) as List<Location>)
-
-                fetchLandmarksTask = FetchLandmarksAsyncTask()
-                fetchLandmarksTask.execute(this@MenuActivity, locationDetector.mCurrentLocation?.latitude.toString(),
-                        "" + locationDetector.mCurrentLocation?.longitude.toString(), listner)
-            }
-        }
-
         locationDetector = LocationDetector()
 
-        locationDetector.mRequestingLocationUpdates = true
+        locationDetector.mRequestingLocationUpdates = false
         locationDetector.updateValuesFromBundle(savedInstanceState, this)
 
         locationDetector.getFusedLocationClient(this)
@@ -87,7 +67,11 @@ class MenuActivity : AppCompatActivity() {
         }
 
         favoriteLandMark.setOnClickListener {
-            //TODO
+            val intent = Intent(this@MenuActivity, LandmarksActivity::class.java)
+
+            intent.putExtra(getString(R.string.lat), 38.900647)
+            intent.putExtra(getString(R.string.lon),  -77.050370)
+            startActivity(intent)
         }
 
         selectStation.setOnClickListener {
@@ -108,7 +92,7 @@ class MenuActivity : AppCompatActivity() {
         // location updates if the user has requested them.
         if (locationDetector.isReady()) {
             if (locationDetector.mRequestingLocationUpdates && locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
-                locationDetector.startLocationUpdates(this, locCallback)
+//                locationDetector.startLocationUpdates(this, locCallback)
             } else if (!locationDetector.checkPermissions(this@MenuActivity.applicationContext)) {
                 locationDetector.requestPermissions(this@MenuActivity)
                 //return
@@ -120,7 +104,7 @@ class MenuActivity : AppCompatActivity() {
     override fun onPause() {
         // Remove location updates to save battery.
         if (locationDetector.isReady()) {
-            locationDetector.stopLocationUpdates(this, locCallback)
+//            locationDetector.stopLocationUpdates(this, locCallback)
         }
         super.onPause()
     }
@@ -155,7 +139,7 @@ class MenuActivity : AppCompatActivity() {
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (locationDetector.mRequestingLocationUpdates) {
                     Log.i(locationDetector.TAG, "Permission granted, updates requested, starting location updates")
-                    locationDetector.startLocationUpdates(this, locCallback)
+//                    locationDetector.startLocationUpdates(this, locCallback)
                 }
             }
         }

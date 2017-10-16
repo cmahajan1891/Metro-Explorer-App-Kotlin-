@@ -70,8 +70,8 @@ class MetroAdapter(private val metroDataSet: StationData, private val metroStati
     private fun callIntent(metroDataSet:StationData, position:Int){
         Log.d("Clickable", "called")
         val intent = Intent(metroStationsActivity, LandmarksActivity::class.java)
-        intent.putExtra("Lat", metroDataSet.stations[position].Lat)
-        intent.putExtra("Lon", metroDataSet.stations[position].Lon)
+        intent.putExtra(metroStationsActivity.getString(R.string.lat), metroDataSet.stations[position].Lat.toDouble())
+        intent.putExtra(metroStationsActivity.getString(R.string.lon), metroDataSet.stations[position].Lon.toDouble())
         metroStationsActivity.startActivity(intent)
     }
 

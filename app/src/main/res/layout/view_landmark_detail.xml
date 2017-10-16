@@ -36,7 +36,7 @@
         />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -90,12 +90,13 @@
     <TextView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="14dp"
         android:text="1.2 Miles"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/isOpenTextView"
-        app:layout_constraintEnd_toEndOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="@+id/nameTextView"
         app:layout_constraintTop_toTopOf="@+id/isOpenTextView"
         android:clickable="true"
         android:onClick="onClick"

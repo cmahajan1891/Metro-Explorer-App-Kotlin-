@@ -6,4 +6,8 @@
     <string name="search_title">Station Name</string>
     <string name="search_hint">Station Name</string>
     <string name="app_bar_name">Search Stations</string>
+    <string name="lat">latitude</string>
+    <string name="lon">longitude</string>
+    <string name="open">Open Now</string>
+    <string name="closed">Closed</string>
 </resources>
