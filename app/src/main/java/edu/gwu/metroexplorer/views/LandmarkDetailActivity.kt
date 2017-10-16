@@ -34,11 +34,10 @@ class LandmarkDetailActivity : AppCompatActivity() {
 
         val favs = getFavorites()
 
-        favoriteButton.isSelected = landmark != null && favs?.containsKey(landmark.id)!!
+//        favoriteButton.isSelected = landmark != null && favs?.containsKey(landmark.id)!!
 
         websiteButton.setOnClickListener {
-            val url: String = "https://www.google.com/maps/dir/?api=1&origin=38.8976411,-77.0526863&&destination=38.896912, -77.050143"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(landmark.yelpURL))
             this.startActivity(intent)
         }
 
@@ -57,6 +56,17 @@ class LandmarkDetailActivity : AppCompatActivity() {
             }
 
             favoriteButton.isSelected = !favoriteButton.isSelected
+
+        }
+        shareButton.setOnClickListener {
+            var shareText : String = landmark.name
+            shareText = shareText + "\n" + landmark.yelpURL
+
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.setType("text/plain");
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, shareText);
+            this.startActivity(intent)
+
 
         }
     }
