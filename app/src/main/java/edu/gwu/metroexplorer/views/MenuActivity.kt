@@ -55,9 +55,6 @@ class MenuActivity : AppCompatActivity() {
 
         favoriteLandMark.setOnClickListener {
             val intent = Intent(this@MenuActivity, LandmarksActivity::class.java)
-
-            intent.putExtra(getString(R.string.lat), 38.900647)
-            intent.putExtra(getString(R.string.lon), -77.050370)
             startActivity(intent)
         }
 

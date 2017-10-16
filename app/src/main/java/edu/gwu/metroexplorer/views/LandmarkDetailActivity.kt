@@ -12,6 +12,7 @@ import edu.gwu.metroexplorer.model.YelpLandmark
 import com.google.gson.Gson
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import kotlin.collections.HashMap
 
 
@@ -33,8 +34,8 @@ class LandmarkDetailActivity : AppCompatActivity() {
         imageView2.scaleType = ImageView.ScaleType.CENTER_CROP
 
         val favs = getFavorites()
+        favoriteButton.isSelected = favs?.containsKey(landmark.id)!!
 
-//        favoriteButton.isSelected = landmark != null && favs?.containsKey(landmark.id)!!
 
         websiteButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(landmark.yelpURL))
@@ -75,7 +76,7 @@ class LandmarkDetailActivity : AppCompatActivity() {
     fun saveFavorites(favorites: HashMap<String, YelpLandmark>) {
 
 
-        val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
+        val sharedPref: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@LandmarkDetailActivity)
         val editor: SharedPreferences.Editor = sharedPref.edit()
 
         val gson = Gson()
@@ -103,8 +104,8 @@ class LandmarkDetailActivity : AppCompatActivity() {
     }
 
     fun getFavorites(): HashMap<String, YelpLandmark>? {
-        val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
-        var favorites: HashMap<String, YelpLandmark>
+        val sharedPref: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@LandmarkDetailActivity)
+        var favorites: HashMap<String, YelpLandmark> = HashMap()
         if (sharedPref.contains("FAVORITES")) {
             val jsonFavorites = sharedPref.getString("FAVORITES", null)
             val gson = Gson()
@@ -112,8 +113,7 @@ class LandmarkDetailActivity : AppCompatActivity() {
                     HashMap::class.java)
 
             favorites = favoriteItems as HashMap<String, YelpLandmark>
-        } else
-            return null
+        }
 
         return favorites
     }

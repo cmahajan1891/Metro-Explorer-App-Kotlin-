@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -48,18 +49,22 @@ class LandmarksActivity : AppCompatActivity() {
         }
 
         if (lat > 90 || lon > 180) {
-            val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
-            var favorites: HashMap<String,YelpLandmark>
+            val sharedPref: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@LandmarksActivity)
+            var favorites: HashMap<String, YelpLandmark> = HashMap()
             if (sharedPref.contains("FAVORITES")) {
                 val jsonFavorites = sharedPref.getString("FAVORITES", null)
                 val gson = Gson()
                 val favoriteItems = gson.fromJson(jsonFavorites,
                         HashMap::class.java)
 
-                val favorites = favoriteItems.values.toTypedArray() as Array<YelpLandmark>
-                var landmarksAdapter = LandmarksAdapter(favorites, this@LandmarksActivity)
-                landmarksRecyclerView.adapter = landmarksAdapter
 
+                var favArray  = arrayOfNulls<YelpLandmark>(favoriteItems.size)
+                var favList = favoriteItems.toList()
+                favList.forEachIndexed { index, pair ->
+                    favArray[index] = pair.second as YelpLandmark
+                }
+                var landmarksAdapter = LandmarksAdapter(favArray, this@LandmarksActivity)
+                landmarksRecyclerView.adapter = landmarksAdapter
             }
 
         }else{
@@ -143,5 +148,3 @@ class LandmarksAdapter(private val dataSet: Array<YelpLandmark>?, private val ac
         return dataSet.count()
     }
 }
-
-
