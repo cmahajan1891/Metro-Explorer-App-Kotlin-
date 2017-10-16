@@ -1,7 +1,9 @@
 package edu.gwu.metroexplorer.views
 
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import edu.gwu.metroexplorer.R
 import edu.gwu.metroexplorer.async.FetchLandmarksAsyncTask
@@ -45,8 +48,21 @@ class LandmarksActivity : AppCompatActivity() {
         }
 
         if (lat > 90 || lon > 180) {
+            val sharedPref: SharedPreferences = this.getPreferences(Context.MODE_PRIVATE)
+            var favorites: HashMap<String,YelpLandmark>
+            if (sharedPref.contains("FAVORITES")) {
+                val jsonFavorites = sharedPref.getString("FAVORITES", null)
+                val gson = Gson()
+                val favoriteItems = gson.fromJson(jsonFavorites,
+                        HashMap::class.java)
 
-        } else {
+                val favorites = favoriteItems.values.toTypedArray() as Array<YelpLandmark>
+                var landmarksAdapter = LandmarksAdapter(favorites, this@LandmarksActivity)
+                landmarksRecyclerView.adapter = landmarksAdapter
+
+            }
+
+        }else{
             fetchLandmarksTask = FetchLandmarksAsyncTask()
             fetchLandmarksTask.execute(this@LandmarksActivity, lat.toString(),
                     "" + lon.toString(), listener)

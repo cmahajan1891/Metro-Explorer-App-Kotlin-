@@ -17,11 +17,12 @@ data class YelpCoordinates(@SerializedName("latitude") val latitude: String,
 data class YelpSearch(@SerializedName("businesses") val businesses: Array<YelpLandmark>) : Parcelable
 
 @Parcelize
-data class YelpLandmark(@SerializedName("coordinates") val coordinates: YelpCoordinates,
-                        @SerializedName("name") val name: String,
-                        @SerializedName("rating") val rating: Float,
-                        @SerializedName("distance") val distance: Double,
-                        @SerializedName("address") val address: String,
+data class YelpLandmark(@SerializedName("id") val id: String,
+                        @SerializedName("coordinates") val coordinates: YelpCoordinates,
+                        @SerializedName("name")  val name: String,
+                        @SerializedName("rating")  val rating: Float,
+                        @SerializedName("distance")  val distance: Double,
+//TODO                        @SerializedName("address")  val address: String?,
                         @SerializedName("is_closed") val isClosed: Boolean,
                         @SerializedName("image_url") val imageURL: String,
                         @SerializedName("url") val yelpURL: String) : Parcelable
