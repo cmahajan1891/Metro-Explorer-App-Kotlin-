@@ -56,13 +56,21 @@ class MetroStationsActivity : AppCompatActivity() {
 
                     var metroAdapter = if (findClosest) {
                         val items = mutableListOf<Station>()
-                        val lat = intent.getDoubleExtra("lat", 0.0)
-                        val long = intent.getDoubleExtra("long", 0.0)
+                        var lat = intent.getDoubleExtra("lat", 0.0)
+                        var long = intent.getDoubleExtra("long", 0.0)
+
+
                         stationData.stations.forEach {
 
-                            val dis = distance(lat, long, it.Lat.toDouble(), it.Lon.toDouble(), "K")
-                            Log.d("Distance", "$dis")
-                            if (dis.toDouble() <= 1000.0) {
+                            var lat2 = it.Lat.toDouble()
+                            var lon2 = it.Lon.toDouble()
+
+                            val res = FloatArray(1)
+
+                            android.location.Location.distanceBetween(lat, long, lat2, lon2, res)
+
+                            Log.d("Distance", res[0].toString())
+                            if (res[0] / 1000 <= 2.0) {
                                 items.add(it)
                             }
 
@@ -169,35 +177,6 @@ class MetroStationsActivity : AppCompatActivity() {
             onCmpLst.onComplete()
 
         }
-    }
-
-    private fun distance(lat1: Double, lon1: Double, lat2: Double, lon2: Double, unit: String): Double {
-        val theta = lon1 - lon2
-        var dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta))
-        dist = Math.acos(dist)
-        dist = rad2deg(dist)
-        dist *= 60.0 * 1.1515
-        if (unit === "K") {
-            dist *= 1.609344
-        } else if (unit === "N") {
-            dist *= 0.8684
-        }
-
-        return dist
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::	This function converts decimal degrees to radians						 :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private fun deg2rad(deg: Double): Double {
-        return deg * Math.PI / 180.0
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::	This function converts radians to decimal degrees						 :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private fun rad2deg(rad: Double): Double {
-        return rad * 180 / Math.PI
     }
 
 

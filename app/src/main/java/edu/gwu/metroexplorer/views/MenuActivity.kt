@@ -5,18 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import edu.gwu.metroexplorer.BuildConfig
 import edu.gwu.metroexplorer.R
 import edu.gwu.metroexplorer.location.*
 import kotlinx.android.synthetic.main.activity_menu.*
@@ -37,7 +30,7 @@ class MenuActivity : AppCompatActivity() {
             override fun onLocationResult(locationResult: LocationResult) {
 
                 locationDetector.mCurrentLocation = locationResult.lastLocation
-                Toast.makeText(this@MenuActivity, "Latitude: "+ locationDetector.mCurrentLocation?.latitude +"Longitude: "+ locationDetector.mCurrentLocation?.longitude, Toast.LENGTH_LONG).show()
+                //Toast.makeText(this@MenuActivity, "Latitude: "+ locationDetector.mCurrentLocation?.latitude +"Longitude: "+ locationDetector.mCurrentLocation?.longitude, Toast.LENGTH_LONG).show()
             }
         }
 
@@ -95,7 +88,7 @@ class MenuActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun updateUI(){
+    fun updateUI() {
 
     }
 
