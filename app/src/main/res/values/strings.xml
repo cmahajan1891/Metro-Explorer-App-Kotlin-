@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MetroExplorer</string>
+    <string name="app_name">Metro Explorer</string>
     <string name="title_activity_maps">Map</string>
     <string name="placeholder">LoremIpsum</string>
     <string name="rating_title_landmark">Rating</string>

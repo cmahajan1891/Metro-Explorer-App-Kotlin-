@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Metro Explorer</string>
+
+    <string name="title_activity_maps">Carte</string>
+    <string name="placeholder">LoremIpsum</string>
+    <string name="rating_title_landmark">Évaluation</string>
+    <string name="search_title">Nom de la station</string>
+    <string name="search_hint">Nom de la station</string>
+    <string name="app_bar_name">Stations de recherche</string>
+    <string name="lat">latitude</string>
+    <string name="lon">longitude</string>
+    <string name="open">Ouvrez maintenant</string>
+    <string name="closed">Fermé</string>
+</resources>
