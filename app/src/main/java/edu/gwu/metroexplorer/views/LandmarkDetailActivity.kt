@@ -27,7 +27,7 @@ class LandmarkDetailActivity : AppCompatActivity() {
         titleTextView.text = landmark.name
         ratingBar2.rating = landmark.rating
 
-        addressTextView.text = ""//TODO landmark.address
+        addressTextView.text = landmark.location.address.joinToString("\n")
 
         Picasso.with(this@LandmarkDetailActivity).load(landmark.imageURL).into(imageView2)
         imageView2.scaleType = ImageView.ScaleType.CENTER_CROP
