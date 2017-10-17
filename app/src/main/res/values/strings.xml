@@ -10,4 +10,7 @@
     <string name="lon">longitude</string>
     <string name="open">Open Now</string>
     <string name="closed">Closed</string>
+    <string name="closest_station_btn_title">Use Closest Station </string>
+    <string name="find_station_btn_title">Select a Station</string>
+    <string name="favorite_landmarks_btn_title">Favorite Landmarks</string>
 </resources>
