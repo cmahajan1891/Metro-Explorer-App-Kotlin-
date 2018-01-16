@@ -1,0 +1,2 @@
+# Metro-Explorer-App-Kotlin-
+is a beautiful app (developed using Kotlin) that assists travelers from different countries to explore the landmarks in Washington, DC Metro Area. You can find many landmarks in DC, including Lincoln Memorial, Washington Monument, the White House, etc. By searching a lot of metro stations in DC, you can find the landmarks around them. It is very convenient for people to arrive at places they like by DC Metro.
